@@ -1,0 +1,72 @@
+<?php
+session_start();
+if (!isset($_SESSION['login'])) {
+    header("Location: login.php");
+    exit;
+}
+
+include "db.php";
+
+if (isset($_POST['submit'])) {
+    $name  = $_POST['name'];
+    $price = $_POST['price'];
+    $stock = $_POST['stock'];
+
+    // Upload File
+    $image = $_FILES['image']['name'];
+    $tmp   = $_FILES['image']['tmp_name'];
+
+    if ($image != "") {
+        move_uploaded_file($tmp, "img/" . $image);
+    } else {
+        $image = null;
+    }
+
+    mysqli_query($conn, "INSERT INTO items (name, price, stock, image)
+                         VALUES ('$name', '$price', '$stock', '$image')");
+
+    header("Location: index.php");
+    exit;
+}
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tambah Barang</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+</head>
+
+<body class="bg-light">
+<div class="container mt-5">
+    <h2>Tambah Barang</h2>
+
+    <form method="POST" enctype="multipart/form-data">
+
+        <div class="mb-3">
+            <label>Nama Barang</label>
+            <input type="text" name="name" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label>Harga</label>
+            <input type="number" name="price" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label>Stok</label>
+            <input type="number" name="stock" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label>Foto Barang</label>
+            <input type="file" name="image" class="form-control">
+        </div>
+
+        <button name="submit" class="btn btn-success">Simpan</button>
+        <a href="index.php" class="btn btn-secondary">Kembali</a>
+
+    </form>
+</div>
+</body>
+</html>
